@@ -1,140 +1,107 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace Warp Real</title>
+    <title>Warp Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #fbff00; --bg: #000; --card: rgba(0, 0, 0, 0.6); }
-        
-        /* EL FONDO DEL VIDEO QUE ME ENSEÑASTE */
-        body { 
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
-            color: white;
-            /* Aquí usamos una imagen que simula el túnel de luz del video */
-            background: url('https://w0.peakpx.com/wallpaper/559/314/HD-wallpaper-warp-speed-star-trails-space-travel-hyper-speed.jpg') no-repeat center center fixed;
-            background-size: cover;
+        /* FONDO NEGRO TOTAL COMO EN TU VIDEO */
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; overflow: hidden; font-family: sans-serif; 
         }
 
-        /* Capa oscura para que el texto se lea bien sobre el fondo brillante */
-        .overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: -1;
+        /* CONTENEDOR DE ESTRELLAS */
+        .warp-scene {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            perspective: 400px; z-index: -1;
         }
 
-        .hidden { display: none !important; }
+        .star {
+            position: absolute; width: 2px; height: 2px; background: #fff;
+            border-radius: 50%; opacity: 0;
+            animation: warpMove 2s infinite linear;
+        }
 
-        /* REGISTRO CON ICONOS Y CRISTAL */
-        .auth-container { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; }
-        .auth-card { 
-            background: var(--card); 
-            padding: 40px 30px; 
-            border-radius: 30px; 
-            width: 100%; 
-            max-width: 320px; 
-            text-align: center; 
+        /* EFECTO DE LÍNEAS ESTIRADAS (WARP) */
+        @keyframes warpMove {
+            0% { transform: translateZ(0) scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateZ(400px) scale(15); opacity: 0; background: var(--primary); }
+        }
+
+        /* COLORES Y TARJETA CRISTAL */
+        :root { --primary: #fbff00; }
+        .glass {
+            background: rgba(10, 10, 10, 0.8);
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid rgba(251, 255, 0, 0.2);
+            border-radius: 25px; padding: 30px;
+            width: 85%; max-width: 320px; text-align: center;
         }
 
+        .auth-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        
+        /* ICONOS EN AMARILLO */
         .input-group { position: relative; margin-bottom: 20px; }
-        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 18px; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); }
         input { 
-            width: 100%; 
-            padding: 14px 14px 14px 45px; 
-            border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.2); 
-            background: rgba(0,0,0,0.6); 
-            color: white; 
-            box-sizing: border-box; 
-            outline: none; 
+            width: 100%; padding: 12px 12px 12px 45px; border-radius: 12px; 
+            border: 1px solid #333; background: #000; color: white; box-sizing: border-box; 
         }
-
+        
         button { 
-            width: 100%; 
-            padding: 14px; 
-            border: none; 
-            border-radius: 15px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            background: var(--primary); 
-            color: black; 
-            text-transform: uppercase;
-            box-shadow: 0 5px 15px rgba(251, 255, 0, 0.4);
+            width: 100%; padding: 12px; border-radius: 12px; border: none;
+            background: var(--primary); color: #000; font-weight: bold; 
+            box-shadow: 0 0 20px rgba(251, 255, 0, 0.4);
         }
 
-        /* TIENDA */
-        .header { 
-            padding: 20px; 
-            background: rgba(0, 0, 0, 0.8); 
-            backdrop-filter: blur(10px);
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 10; 
-        }
-        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-        .product-card { 
-            background: rgba(0, 0, 0, 0.7); 
-            border-radius: 20px; 
-            overflow: hidden; 
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .product-img { width: 100%; height: 140px; object-fit: cover; }
-        .product-info { padding: 12px; }
-        .product-price { color: var(--primary); font-weight: bold; font-size: 1.1em; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="overlay"></div>
+<div class="warp-scene" id="stars-container"></div>
 
 <div id="view-auth" class="auth-container">
-    <div class="auth-card">
-        <i class="fas fa-bolt" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
-        <h2 style="letter-spacing: 3px; margin-bottom: 30px;">WARP ACCESS</h2>
+    <div class="glass">
+        <i class="fas fa-rocket" style="font-size: 40px; color: var(--primary); margin-bottom: 20px;"></i>
+        <h2 style="color: white; margin-bottom: 30px;">WARP LOGIN</h2>
         
         <div id="auth-step1">
             <div class="input-group">
-                <i class="fas fa-phone-alt"></i>
+                <i class="fas fa-mobile-alt"></i>
                 <input type="tel" id="phone" placeholder="Celular">
             </div>
-            <button onclick="sendCode()">Enviar PIN</button>
+            <button onclick="sendCode()">ENTRAR AL ESPACIO</button>
         </div>
 
         <div id="auth-step2" class="hidden">
-            <p>TU CÓDIGO: <b id="hint" style="color:var(--primary); font-size: 20px;"></b></p>
+            <p style="color: white;">PIN: <b id="hint" style="color:var(--primary)"></b></p>
             <div class="input-group">
-                <i class="fas fa-shield-alt"></i>
-                <input type="number" id="otp" placeholder="Ingresa PIN">
+                <i class="fas fa-key"></i>
+                <input type="number" id="otp" placeholder="Código">
             </div>
-            <button onclick="verify()">Verificar Ahora</button>
+            <button onclick="verify()">ACCEDER</button>
         </div>
     </div>
 </div>
 
-<div id="view-market" class="hidden">
-    <div class="header">
-        <h3 style="margin:0; color:var(--primary)">P2P MARKET</h3>
-        <i class="fas fa-plus-circle" style="font-size: 30px; color:var(--primary)" onclick="openModal()"></i>
-    </div>
-    <div class="product-grid" id="grid"></div>
-</div>
-
 <script>
-    let code;
-    let products = JSON.parse(localStorage.getItem('warp_final_db')) || [];
+    // GENERADOR DE ESTRELLAS PARA EL EFECTO DEL VIDEO
+    const container = document.getElementById('stars-container');
+    for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        container.appendChild(star);
+    }
 
+    let code;
     function sendCode() {
         if(document.getElementById('phone').value.length < 5) return;
         code = Math.floor(1000 + Math.random() * 9000);
@@ -145,35 +112,10 @@
 
     function verify() {
         if(document.getElementById('otp').value == code) {
-            localStorage.setItem('warp_logged', 'true');
-            showMarket();
+            alert("¡Conexión Exitosa!");
+            // Aquí iría el resto de tu tienda
         }
     }
-
-    function showMarket() {
-        document.getElementById('view-auth').classList.add('hidden');
-        document.getElementById('view-market').classList.remove('hidden');
-        render();
-    }
-
-    function render() {
-        const g = document.getElementById('grid');
-        g.innerHTML = "";
-        products.forEach(p => {
-            g.innerHTML += `
-                <div class="product-card">
-                    <img src="${p.img}" class="product-img">
-                    <div class="product-info">
-                        <div class="product-price">${p.price}</div>
-                        <div style="font-size: 0.8em; opacity: 0.7;">${p.name}</div>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    window.onload = () => { if(localStorage.getItem('warp_logged')) showMarket(); };
 </script>
 </body>
 </html>
-
