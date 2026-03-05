@@ -3,107 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Pro</title>
+    <title>Marketplace P2P</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #00ff88; --bg: #0f0f0f; --card: #1a1a1a; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        
-        .card { background: var(--card); padding: 40px 30px; border-radius: 20px; width: 85%; max-width: 360px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.7); border: 1px solid #333; position: relative; overflow: hidden; }
-        
-        /* Decoración superior */
-        .card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, #00ff88, #007bff); }
-
-        h2 { margin-bottom: 25px; font-weight: 300; letter-spacing: 1px; }
-
-        .input-group { position: relative; margin-bottom: 15px; }
-        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; transition: 0.3s; }
-        
-        input { width: 100%; padding: 14px 14px 14px 45px; border-radius: 10px; border: 2px solid #333; background: #222; color: white; font-size: 16px; transition: 0.3s; box-sizing: border-box; outline: none; }
-        
-        /* Efecto de enfoque (Focus) */
-        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 255, 136, 0.2); }
-        input:focus + i { color: var(--primary); }
-
-        button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; transition: 0.3s; }
-        .btn-send { background: var(--primary); color: #000; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3); }
-        .btn-send:active { transform: scale(0.98); }
-        
-        .hidden { display: none; }
-        .hint-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 500px; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-buy { background: var(--primary); color: black; }
+        .btn-sell { background: #007bff; color: white; }
+        .product-item { background: #222; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary); }
+        #chat-section { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 100; padding: 20px; box-sizing: border-box; display: none; }
+        #messages { height: 60vh; overflow-y: auto; background: #111; padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px; border-radius: 10px; max-width: 80%; }
+        .sent { background: #007bff; align-self: flex-end; }
+        .received { background: #333; align-self: flex-start; }
+        .img-preview { max-width: 100%; border-radius: 10px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="card" id="contenedor">
+<div class="container" id="main-view">
+    <div id="auth-section" class="card">
+        <h2>Registro</h2>
+        <input type="tel" id="user-phone" placeholder="Tu número de celular">
+        <button class="btn-buy" onclick="login()">Entrar al Marketplace</button>
+    </div>
+
+    <div id="market-section" class="hidden" style="display:none;">
+        <div class="card">
+            <h3>Publicar Producto</h3>
+            <input type="text" id="p-name" placeholder="Nombre del producto">
+            <input type="number" id="p-price" placeholder="Precio ($)">
+            <button class="btn-sell" onclick="publicar()">Publicar ahora</button>
         </div>
 
-    <script>
-        let codigoGenerado;
+        <h3>Productos Disponibles</h3>
+        <div id="products-list">
+            </div>
+    </div>
+</div>
 
-        function cargarInterfaz() {
-            const usuario = localStorage.getItem('usuarioRegistrado');
-            const contenedor = document.getElementById('contenedor');
+<div id="chat-section">
+    <button onclick="cerrarChat()" style="width: auto; background: #444; color: white; margin-bottom: 10px;">⬅ Volver</button>
+    <h2 id="chat-title">Negociación P2P</h2>
+    <div id="messages"></div>
+    
+    <div style="display: flex; gap: 10px;">
+        <input type="text" id="chat-input" placeholder="Escribe un mensaje...">
+        <button onclick="enviarTexto()" style="width: 60px;" class="btn-buy"><i class="fas fa-paper-plane"></i></button>
+    </div>
+    
+    <label for="file-upload" style="display: block; background: #333; padding: 10px; text-align: center; border-radius: 8px; margin-top: 10px; cursor: pointer;">
+        <i class="fas fa-image"></i> Subir Comprobante (Galería)
+    </label>
+    <input type="file" id="file-upload" accept="image/*" style="display: none;" onchange="enviarImagen(event)">
+</div>
 
-            if (usuario) {
-                contenedor.innerHTML = `
-                    <i class="fas fa-check-circle" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
-                    <h2>¡Bienvenido!</h2>
-                    <p>Sesión activa:<br><b>${usuario}</b></p>
-                    <button class="btn-send" style="background: #333; color: white;" onclick="cerrarSesion()">Cerrar Sesión</button>
-                `;
-            } else {
-                contenedor.innerHTML = `
-                    <h2>Crear Cuenta</h2>
-                    <div id="step1">
-                        <div class="input-group">
-                            <input type="tel" id="phone" placeholder="Número de celular">
-                            <i class="fas fa-mobile-alt"></i>
-                        </div>
-                        <button class="btn-send" onclick="enviarCodigo()">Obtener Código</button>
+<script>
+    let productos = [
+        { nombre: "Bitcoin (Ejemplo)", precio: "45000" },
+        { nombre: "Cuenta Premium", precio: "10" }
+    ];
+
+    function login() {
+        const phone = document.getElementById('user-phone').value;
+        if(phone.length < 5) return alert("Ingresa un número");
+        localStorage.setItem('currentUser', phone);
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('market-section').style.display = 'block';
+        actualizarProductos();
+    }
+
+    function publicar() {
+        const name = document.getElementById('p-name').value;
+        const price = document.getElementById('p-price').value;
+        if(!name || !price) return alert("Completa los datos");
+        
+        productos.push({ nombre: name, precio: price });
+        actualizarProductos();
+        alert("¡Producto publicado!");
+    }
+
+    function actualizarProductos() {
+        const list = document.getElementById('products-list');
+        list.innerHTML = "";
+        productos.forEach((p, index) => {
+            list.innerHTML += `
+                <div class="product-item">
+                    <div>
+                        <b>${p.nombre}</b><br>
+                        <small>$${p.price || p.precio}</small>
                     </div>
-                    <div id="step2" class="hidden">
-                        <div class="hint-box">
-                            <small style="color: #888;">SMS Simulado:</small><br>
-                            <b id="hint" style="font-size: 20px; color: var(--primary);"></b>
-                        </div>
-                        <div class="input-group">
-                            <input type="number" id="otpInput" placeholder="Código de 4 dígitos">
-                            <i class="fas fa-key"></i>
-                        </div>
-                        <button class="btn-send" onclick="verificarCodigo()">Verificar Ahora</button>
-                    </div>
-                `;
-            }
-        }
+                    <button class="btn-buy" style="width: auto;" onclick="abrirP2P('${p.nombre}')">Comprar</button>
+                </div>
+            `;
+        });
+    }
 
-        function enviarCodigo() {
-            const phone = document.getElementById('phone').value;
-            if (phone.length < 8) return alert("Por favor, ingresa un número válido");
-            
-            codigoGenerado = Math.floor(1000 + Math.random() * 9000);
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('step2').classList.remove('hidden');
-            document.getElementById('hint').innerText = codigoGenerado;
-        }
+    function abrirP2P(producto) {
+        document.getElementById('chat-title').innerText = "Comprando: " + producto;
+        document.getElementById('chat-section').style.display = 'block';
+        document.getElementById('main-view').style.display = 'none';
+    }
 
-        function verificarCodigo() {
-            const input = document.getElementById('otpInput').value;
-            if (input == codigoGenerado) {
-                localStorage.setItem('usuarioRegistrado', document.getElementById('phone').value);
-                cargarInterfaz();
-            } else {
-                alert("Código incorrecto");
-            }
-        }
+    function cerrarChat() {
+        document.getElementById('chat-section').style.display = 'none';
+        document.getElementById('main-view').style.display = 'block';
+    }
 
-        function cerrarSesion() {
-            localStorage.clear();
-            location.reload();
-        }
+    function enviarTexto() {
+        const input = document.getElementById('chat-input');
+        if(!input.value) return;
+        const box = document.getElementById('messages');
+        box.innerHTML += `<div class="msg sent">${input.value}</div>`;
+        input.value = "";
+        box.scrollTop = box.scrollHeight;
+    }
 
-        window.onload = cargarInterfaz;
-    </script>
+    function enviarImagen(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const box = document.getElementById('messages');
+            box.innerHTML += `
+                <div class="msg sent">
+                    <small>Comprobante enviado:</small><br>
+                    <img src="${e.target.result}" class="img-preview">
+                </div>
+            `;
+            box.scrollTop = box.scrollHeight;
+        };
+        reader.readAsDataURL(file);
+    }
+</script>
+
 </body>
 </html>
+
 ​<!-- end list -->
