@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Portafolio Movil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <h2>Mi Logo</h2>
+        <ul>
+            <li>Inicio</li>
+            <li>Proyectos</li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1>Desarrollado desde Termux</h1>
+        <p>Esta página fue creada totalmente en un celular.</p>
+        <button onclick="saludo()">¡Pruébame!</button>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+nano style.css
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #121212;
+    color: white;
+    text-align: center;
+}
+
+nav {
+    background: #1f1f1f;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.hero {
+    padding: 100px 20px;
+}
+
+button {
+    background: #00ff88;
+    color: black;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 50px;
+    font-weight: bold;
+}
+
+nano script.js
+function saludo() {
+    alert("¡Hackeando el planeta desde mi Android! 🚀");
+}

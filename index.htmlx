@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Web</title>
+    <style>
+        body { background: #222; color: white; text-align: center; font-family: sans-serif; }
+        button { padding: 15px; background: #00ff88; border: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>¡Lo logré desde el celular!</h1>
+    <p>Esta página corre en mi propio servidor.</p>
+    <button onclick="alert('¡Funciona!')">Tócame</button>
+</body>
+</html>
+

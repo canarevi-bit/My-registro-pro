@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Portafolio Movil</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <h2>Mi Logo</h2>
+        <ul>
+            <li>Inicio</li>
+            <li>Proyectos</li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1>Desarrollado desde Termux</h1>
+        <p>Esta página fue creada totalmente en un celular.</p>
+        <button onclick="saludo()">¡Pruébame!</button>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
