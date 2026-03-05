@@ -3,82 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warp P2P</title>
+    <title>Warp P2P - Inicio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --yellow: #fbff00; }
-        body, html { margin: 0; padding: 0; background: #000; color: white; font-family: sans-serif; height: 100%; overflow: hidden; }
+        :root { --primary: #fbff00; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
 
-        /* FONDO ANIMADO ESTILO WARP */
-        .warp-bg {
-            position: fixed; width: 100%; height: 100%; z-index: -1;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                        url('https://w0.peakpx.com/wallpaper/559/314/HD-wallpaper-warp-speed-star-trails-space-travel-hyper-speed.jpg');
-            background-size: cover;
-            animation: moveBg 20s linear infinite;
-        }
-        @keyframes moveBg {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        /* PANTALLA INICIAL: LA LÁMPARA EN LA OSCURIDAD */
+        #intro-layer {
+            position: fixed; inset: 0; background: #000; z-index: 1000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s ease-out;
         }
 
-        .container { display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .card { 
-            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(10px);
-            padding: 30px; border-radius: 20px; border: 1px solid var(--yellow);
-            width: 300px; text-align: center;
+        .lamp-box { cursor: pointer; text-align: center; }
+        .lamp-icon { 
+            font-size: 70px; color: #222; transition: 0.3s; 
+            filter: drop-shadow(0 0 0px transparent);
+        }
+        .lamp-box:hover .lamp-icon { color: #444; }
+        .lamp-box.active .lamp-icon { 
+            color: var(--primary); 
+            filter: drop-shadow(0 0 30px var(--primary)) drop-shadow(0 0 60px var(--primary)); 
         }
 
-        .input-group { position: relative; margin-bottom: 15px; }
-        .input-group i { position: absolute; left: 15px; top: 15px; color: var(--yellow); }
+        /* EFECTO WARP (FONDO ESTRELLA) */
+        .warp-scene { position: fixed; inset: 0; z-index: -1; perspective: 500px; }
+        .star {
+            position: absolute; width: 2px; height: 2px; background: #fff;
+            opacity: 0; animation: warpSpeed 1.8s infinite linear;
+        }
+        @keyframes warpSpeed {
+            0% { transform: translateZ(0); opacity: 0; }
+            30% { opacity: 1; }
+            100% { transform: translateZ(500px) scale(15); opacity: 0; }
+        }
+
+        /* CONTENEDOR DE LOGIN (CRISTAL) */
+        .login-view { 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; opacity: 0; transition: 1.5s; 
+        }
+        .glass-card {
+            background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(20px);
+            border: 1px solid rgba(251, 255, 0, 0.3); border-radius: 30px;
+            padding: 40px; width: 85%; max-width: 320px; text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group i { position: absolute; left: 15px; top: 14px; color: var(--primary); font-size: 18px; }
         input { 
-            width: 100%; padding: 12px 12px 12px 40px; border-radius: 10px; 
-            border: 1px solid #444; background: #111; color: white; box-sizing: border-box; 
+            width: 100%; padding: 14px 14px 14px 45px; border-radius: 15px; border: 1px solid #333; 
+            background: #050505; color: white; box-sizing: border-box; outline: none;
         }
 
         button { 
-            width: 100%; padding: 12px; border: none; border-radius: 10px; 
-            background: var(--yellow); color: black; font-weight: bold; cursor: pointer;
+            width: 100%; padding: 14px; border-radius: 15px; border: none; font-weight: bold;
+            background: var(--primary); color: #000; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(251, 255, 0, 0.3); cursor: pointer;
         }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="warp-bg"></div>
-    <div class="container">
-        <div class="card" id="auth-step1">
-            <i class="fas fa-user-circle" style="font-size: 50px; color: var(--yellow); margin-bottom: 20px;"></i>
-            <div class="input-group">
-                <i class="fas fa-phone"></i>
-                <input type="tel" id="phone" placeholder="Celular">
-            </div>
-            <button onclick="sendCode()">OBTENER PIN</button>
-        </div>
+
+<div id="intro-layer">
+    <div class="lamp-box" id="main-lamp" onclick="ignite()">
+        <i class="fas fa-lightbulb lamp-icon"></i>
+        <p style="color: #333; margin-top: 20px; font-weight: bold; letter-spacing: 1px;">ENCENDER ACCESO</p>
+    </div>
+</div>
+
+<div class="warp-scene" id="stars"></div>
+
+<div id="login-screen" class="login-view">
+    <div class="glass-card">
+        <i class="fas fa-user-shield" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
+        <h2 style="color: white; margin-bottom: 30px;">REGISTRO WARP</h2>
         
-        <div class="card hidden" id="auth-step2">
-            <h3 style="color: var(--yellow)">PIN: <span id="hint"></span></h3>
+        <div id="step-phone">
             <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input type="number" id="otp" placeholder="Ingresa PIN">
+                <i class="fas fa-mobile-alt"></i>
+                <input type="tel" id="user-phone" placeholder="Tu Celular">
             </div>
-            <button onclick="verify()">ACCEDER</button>
+            <button onclick="requestCode()">ENTRAR</button>
+        </div>
+
+        <div id="step-pin" class="hidden">
+            <p style="color: #aaa;">PIN GENERADO: <b id="pin-display" style="color:var(--primary)"></b></p>
+            <div class="input-group">
+                <i class="fas fa-key"></i>
+                <input type="number" id="user-pin" placeholder="Ingresa PIN">
+            </div>
+            <button onclick="finishLogin()">ACCEDER A LA TIENDA</button>
         </div>
     </div>
+</div>
 
-    <script>
-        let code;
-        function sendCode() {
-            if(document.getElementById('phone').value.length < 5) return;
-            code = Math.floor(1000 + Math.random() * 9000);
-            document.getElementById('auth-step1').classList.add('hidden');
-            document.getElementById('auth-step2').classList.remove('hidden');
-            document.getElementById('hint').innerText = code;
+<script>
+    // 1. GENERAR FONDO DE ESTRELLAS
+    const container = document.getElementById('stars');
+    for(let i=0; i<90; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 100 + '%';
+        s.style.animationDelay = Math.random() * 2 + 's';
+        container.appendChild(s);
+    }
+
+    // 2. FUNCIÓN DE LA LÁMPARA (ENCENDIDO)
+    function ignite() {
+        const lamp = document.getElementById('main-lamp');
+        const intro = document.getElementById('intro-layer');
+        const login = document.getElementById('login-screen');
+
+        lamp.classList.add('active'); // Enciende la bombilla
+        
+        setTimeout(() => {
+            intro.style.opacity = '0'; // Se desvanece la oscuridad
+            login.style.opacity = '1'; // Aparece el login
+            setTimeout(() => intro.classList.add('hidden'), 1000);
+        }, 600);
+    }
+
+    // 3. LÓGICA DE LOGEO
+    let tempCode;
+    function requestCode() {
+        if(document.getElementById('user-phone').value.length < 6) return;
+        tempCode = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('step-phone').classList.add('hidden');
+        document.getElementById('step-pin').classList.remove('hidden');
+        document.getElementById('pin-display').innerText = tempCode;
+    }
+
+    function finishLogin() {
+        if(document.getElementById('user-pin').value == tempCode) {
+            alert("¡Conexión Exitosa!"); // Aquí ya entra a ver los productos
         }
-        function verify() {
-            if(document.getElementById('otp').value == code) alert("¡Bienvenido!");
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
-​<!-- end list -->
+
+
+
