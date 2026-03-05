@@ -1,121 +1,84 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warp Pro</title>
+    <title>Warp P2P</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* FONDO NEGRO TOTAL COMO EN TU VIDEO */
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: #000; overflow: hidden; font-family: sans-serif; 
+        :root { --yellow: #fbff00; }
+        body, html { margin: 0; padding: 0; background: #000; color: white; font-family: sans-serif; height: 100%; overflow: hidden; }
+
+        /* FONDO ANIMADO ESTILO WARP */
+        .warp-bg {
+            position: fixed; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://w0.peakpx.com/wallpaper/559/314/HD-wallpaper-warp-speed-star-trails-space-travel-hyper-speed.jpg');
+            background-size: cover;
+            animation: moveBg 20s linear infinite;
+        }
+        @keyframes moveBg {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
-        /* CONTENEDOR DE ESTRELLAS */
-        .warp-scene {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            perspective: 400px; z-index: -1;
+        .container { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .card { 
+            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(10px);
+            padding: 30px; border-radius: 20px; border: 1px solid var(--yellow);
+            width: 300px; text-align: center;
         }
 
-        .star {
-            position: absolute; width: 2px; height: 2px; background: #fff;
-            border-radius: 50%; opacity: 0;
-            animation: warpMove 2s infinite linear;
-        }
-
-        /* EFECTO DE LÍNEAS ESTIRADAS (WARP) */
-        @keyframes warpMove {
-            0% { transform: translateZ(0) scale(1); opacity: 0; }
-            10% { opacity: 1; }
-            100% { transform: translateZ(400px) scale(15); opacity: 0; background: var(--primary); }
-        }
-
-        /* COLORES Y TARJETA CRISTAL */
-        :root { --primary: #fbff00; }
-        .glass {
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(251, 255, 0, 0.2);
-            border-radius: 25px; padding: 30px;
-            width: 85%; max-width: 320px; text-align: center;
-        }
-
-        .auth-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
-        
-        /* ICONOS EN AMARILLO */
-        .input-group { position: relative; margin-bottom: 20px; }
-        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); }
+        .input-group { position: relative; margin-bottom: 15px; }
+        .input-group i { position: absolute; left: 15px; top: 15px; color: var(--yellow); }
         input { 
-            width: 100%; padding: 12px 12px 12px 45px; border-radius: 12px; 
-            border: 1px solid #333; background: #000; color: white; box-sizing: border-box; 
-        }
-        
-        button { 
-            width: 100%; padding: 12px; border-radius: 12px; border: none;
-            background: var(--primary); color: #000; font-weight: bold; 
-            box-shadow: 0 0 20px rgba(251, 255, 0, 0.4);
+            width: 100%; padding: 12px 12px 12px 40px; border-radius: 10px; 
+            border: 1px solid #444; background: #111; color: white; box-sizing: border-box; 
         }
 
+        button { 
+            width: 100%; padding: 12px; border: none; border-radius: 10px; 
+            background: var(--yellow); color: black; font-weight: bold; cursor: pointer;
+        }
         .hidden { display: none; }
     </style>
 </head>
 <body>
-
-<div class="warp-scene" id="stars-container"></div>
-
-<div id="view-auth" class="auth-container">
-    <div class="glass">
-        <i class="fas fa-rocket" style="font-size: 40px; color: var(--primary); margin-bottom: 20px;"></i>
-        <h2 style="color: white; margin-bottom: 30px;">WARP LOGIN</h2>
-        
-        <div id="auth-step1">
+    <div class="warp-bg"></div>
+    <div class="container">
+        <div class="card" id="auth-step1">
+            <i class="fas fa-user-circle" style="font-size: 50px; color: var(--yellow); margin-bottom: 20px;"></i>
             <div class="input-group">
-                <i class="fas fa-mobile-alt"></i>
+                <i class="fas fa-phone"></i>
                 <input type="tel" id="phone" placeholder="Celular">
             </div>
-            <button onclick="sendCode()">ENTRAR AL ESPACIO</button>
+            <button onclick="sendCode()">OBTENER PIN</button>
         </div>
-
-        <div id="auth-step2" class="hidden">
-            <p style="color: white;">PIN: <b id="hint" style="color:var(--primary)"></b></p>
+        
+        <div class="card hidden" id="auth-step2">
+            <h3 style="color: var(--yellow)">PIN: <span id="hint"></span></h3>
             <div class="input-group">
-                <i class="fas fa-key"></i>
-                <input type="number" id="otp" placeholder="Código">
+                <i class="fas fa-lock"></i>
+                <input type="number" id="otp" placeholder="Ingresa PIN">
             </div>
             <button onclick="verify()">ACCEDER</button>
         </div>
     </div>
-</div>
 
-<script>
-    // GENERADOR DE ESTRELLAS PARA EL EFECTO DEL VIDEO
-    const container = document.getElementById('stars-container');
-    for (let i = 0; i < 100; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.animationDelay = Math.random() * 2 + 's';
-        container.appendChild(star);
-    }
-
-    let code;
-    function sendCode() {
-        if(document.getElementById('phone').value.length < 5) return;
-        code = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById('auth-step1').classList.add('hidden');
-        document.getElementById('auth-step2').classList.remove('hidden');
-        document.getElementById('hint').innerText = code;
-    }
-
-    function verify() {
-        if(document.getElementById('otp').value == code) {
-            alert("¡Conexión Exitosa!");
-            // Aquí iría el resto de tu tienda
+    <script>
+        let code;
+        function sendCode() {
+            if(document.getElementById('phone').value.length < 5) return;
+            code = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('auth-step1').classList.add('hidden');
+            document.getElementById('auth-step2').classList.remove('hidden');
+            document.getElementById('hint').innerText = code;
         }
-    }
-</script>
+        function verify() {
+            if(document.getElementById('otp').value == code) alert("¡Bienvenido!");
+        }
+    </script>
 </body>
 </html>
+​<!-- end list -->
