@@ -3,146 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace P2P</title>
+    <title>Marketplace Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #00ff88; --bg: #0f0f0f; --card: #1a1a1a; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 500px; }
-        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #333; margin-bottom: 20px; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-buy { background: var(--primary); color: black; }
-        .btn-sell { background: #007bff; color: white; }
-        .product-item { background: #222; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary); }
-        #chat-section { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 100; padding: 20px; box-sizing: border-box; display: none; }
-        #messages { height: 60vh; overflow-y: auto; background: #111; padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px; border-radius: 10px; max-width: 80%; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 0; }
+        .hidden { display: none !important; }
+        
+        /* DISEÑO DE REGISTRO (RECUPERADO) */
+        .auth-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .auth-card { background: var(--card); padding: 35px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; border: 1px solid #333; position: relative; }
+        .auth-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--primary); border-radius: 20px 20px 0 0; }
+        .input-group { position: relative; margin-bottom: 15px; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; }
+        input { width: 100%; padding: 12px 12px 12px 45px; border-radius: 10px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--primary); }
+        button { width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-main { background: var(--primary); color: black; }
+
+        /* TIENDA TIPO CUADRÍCULA (NUEVO) */
+        .header { padding: 20px; background: var(--card); border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .product-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #222; position: relative; }
+        .product-img { width: 100%; height: 150px; object-fit: cover; background: #222; }
+        .product-info { padding: 10px; }
+        .product-price { color: var(--primary); font-weight: bold; font-size: 1.1em; }
+        .product-title { font-size: 0.9em; color: #ccc; margin: 5px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* SECCIÓN P2P CHAT */
+        #chat-view { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; }
+        .chat-header { padding: 15px; background: var(--card); display: flex; align-items: center; gap: 15px; }
+        #messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px; border-radius: 10px; max-width: 75%; font-size: 14px; }
         .sent { background: #007bff; align-self: flex-end; }
         .received { background: #333; align-self: flex-start; }
-        .img-preview { max-width: 100%; border-radius: 10px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-<div class="container" id="main-view">
-    <div id="auth-section" class="card">
-        <h2>Registro</h2>
-        <input type="tel" id="user-phone" placeholder="Tu número de celular">
-        <button class="btn-buy" onclick="login()">Entrar al Marketplace</button>
-    </div>
-
-    <div id="market-section" class="hidden" style="display:none;">
-        <div class="card">
-            <h3>Publicar Producto</h3>
-            <input type="text" id="p-name" placeholder="Nombre del producto">
-            <input type="number" id="p-price" placeholder="Precio ($)">
-            <button class="btn-sell" onclick="publicar()">Publicar ahora</button>
+<div id="view-auth" class="auth-container">
+    <div class="auth-card">
+        <i class="fas fa-user-shield" style="font-size: 40px; color: var(--primary); margin-bottom: 15px;"></i>
+        <h2 style="margin: 0 0 20px 0;">Verificación</h2>
+        
+        <div id="auth-step1">
+            <div class="input-group">
+                <i class="fas fa-mobile-alt"></i>
+                <input type="tel" id="phone" placeholder="Celular">
+            </div>
+            <button class="btn-main" onclick="sendCode()">Enviar SMS</button>
         </div>
 
-        <h3>Productos Disponibles</h3>
-        <div id="products-list">
+        <div id="auth-step2" class="hidden">
+            <p style="font-size: 13px;">Código enviado: <b id="hint" style="color:var(--primary)"></b></p>
+            <div class="input-group">
+                <i class="fas fa-key"></i>
+                <input type="number" id="otp" placeholder="Código">
             </div>
+            <button class="btn-main" onclick="verify()">Verificar Cuenta</button>
+        </div>
     </div>
 </div>
 
-<div id="chat-section">
-    <button onclick="cerrarChat()" style="width: auto; background: #444; color: white; margin-bottom: 10px;">⬅ Volver</button>
-    <h2 id="chat-title">Negociación P2P</h2>
-    <div id="messages"></div>
-    
-    <div style="display: flex; gap: 10px;">
-        <input type="text" id="chat-input" placeholder="Escribe un mensaje...">
-        <button onclick="enviarTexto()" style="width: 60px;" class="btn-buy"><i class="fas fa-paper-plane"></i></button>
+<div id="view-market" class="hidden">
+    <div class="header">
+        <h3 style="margin:0"><i class="fas fa-store"></i> Market P2P</h3>
+        <button onclick="logout()" style="width:auto; padding:5px 10px; background:transparent; color:gray;"><i class="fas fa-sign-out-alt"></i></button>
     </div>
-    
-    <label for="file-upload" style="display: block; background: #333; padding: 10px; text-align: center; border-radius: 8px; margin-top: 10px; cursor: pointer;">
-        <i class="fas fa-image"></i> Subir Comprobante (Galería)
-    </label>
-    <input type="file" id="file-upload" accept="image/*" style="display: none;" onchange="enviarImagen(event)">
+
+    <div style="padding: 15px;">
+        <button class="btn-main" style="background:#222; color:white; border:1px dashed #555;" onclick="openAddProduct()">
+            <i class="fas fa-plus"></i> Publicar nuevo producto
+        </button>
+    </div>
+
+    <div class="product-grid" id="grid">
+        </div>
+</div>
+
+<div id="chat-view" class="hidden">
+    <div class="chat-header">
+        <i class="fas fa-arrow-left" onclick="closeChat()"></i>
+        <span id="chat-product-name">Negociación</span>
+    </div>
+    <div id="messages"></div>
+    <div style="padding:15px; background:var(--card); display:flex; gap:10px;">
+        <label for="file-chat" style="background:#333; padding:10px; border-radius:8px;"><i class="fas fa-image"></i></label>
+        <input type="file" id="file-chat" class="hidden" accept="image/*" onchange="sendImage(event)">
+        <input type="text" id="chat-input" style="padding-left:15px;" placeholder="Escribe mensaje...">
+        <button onclick="sendText()" class="btn-main" style="width:60px; margin:0;"><i class="fas fa-paper-plane"></i></button>
+    </div>
 </div>
 
 <script>
-    let productos = [
-        { nombre: "Bitcoin (Ejemplo)", precio: "45000" },
-        { nombre: "Cuenta Premium", precio: "10" }
+    let code;
+    let products = [
+        { name: "Moto Honda Biz", price: "Gratis", img: "https://images.unsplash.com/photo-1558981403-c5f91cbcf523?w=400" },
+        { name: "Laptop Acer Ryzen 7", price: "Bs. 589", img: "https://images.unsplash.com/photo-1517336714460-4c9889a79453?w=400" }
     ];
 
-    function login() {
-        const phone = document.getElementById('user-phone').value;
-        if(phone.length < 5) return alert("Ingresa un número");
-        localStorage.setItem('currentUser', phone);
-        document.getElementById('auth-section').style.display = 'none';
-        document.getElementById('market-section').style.display = 'block';
-        actualizarProductos();
+    function sendCode() {
+        if(document.getElementById('phone').value.length < 5) return;
+        code = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('auth-step1').classList.add('hidden');
+        document.getElementById('auth-step2').classList.remove('hidden');
+        document.getElementById('hint').innerText = code;
     }
 
-    function publicar() {
-        const name = document.getElementById('p-name').value;
-        const price = document.getElementById('p-price').value;
-        if(!name || !price) return alert("Completa los datos");
-        
-        productos.push({ nombre: name, precio: price });
-        actualizarProductos();
-        alert("¡Producto publicado!");
+    function verify() {
+        if(document.getElementById('otp').value == code) {
+            localStorage.setItem('logged', 'true');
+            loadMarket();
+        }
     }
 
-    function actualizarProductos() {
-        const list = document.getElementById('products-list');
-        list.innerHTML = "";
-        productos.forEach((p, index) => {
-            list.innerHTML += `
-                <div class="product-item">
-                    <div>
-                        <b>${p.nombre}</b><br>
-                        <small>$${p.price || p.precio}</small>
+    function loadMarket() {
+        document.getElementById('view-auth').classList.add('hidden');
+        document.getElementById('view-market').classList.remove('hidden');
+        renderProducts();
+    }
+
+    function renderProducts() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = "";
+        products.forEach(p => {
+            grid.innerHTML += `
+                <div class="product-card" onclick="openChat('${p.name}')">
+                    <img src="${p.img}" class="product-img">
+                    <div class="product-info">
+                        <div class="product-price">${p.price}</div>
+                        <div class="product-title">${p.name}</div>
                     </div>
-                    <button class="btn-buy" style="width: auto;" onclick="abrirP2P('${p.nombre}')">Comprar</button>
                 </div>
             `;
         });
     }
 
-    function abrirP2P(producto) {
-        document.getElementById('chat-title').innerText = "Comprando: " + producto;
-        document.getElementById('chat-section').style.display = 'block';
-        document.getElementById('main-view').style.display = 'none';
+    function openChat(name) {
+        document.getElementById('chat-product-name').innerText = name;
+        document.getElementById('view-market').classList.add('hidden');
+        document.getElementById('chat-view').classList.remove('hidden');
     }
 
-    function cerrarChat() {
-        document.getElementById('chat-section').style.display = 'none';
-        document.getElementById('main-view').style.display = 'block';
+    function closeChat() {
+        document.getElementById('chat-view').classList.add('hidden');
+        document.getElementById('view-market').classList.remove('hidden');
     }
 
-    function enviarTexto() {
+    function sendText() {
         const input = document.getElementById('chat-input');
         if(!input.value) return;
-        const box = document.getElementById('messages');
-        box.innerHTML += `<div class="msg sent">${input.value}</div>`;
+        document.getElementById('messages').innerHTML += `<div class="msg sent">${input.value}</div>`;
         input.value = "";
-        box.scrollTop = box.scrollHeight;
     }
 
-    function enviarImagen(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
+    function sendImage(e) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-            const box = document.getElementById('messages');
-            box.innerHTML += `
-                <div class="msg sent">
-                    <small>Comprobante enviado:</small><br>
-                    <img src="${e.target.result}" class="img-preview">
-                </div>
+        reader.onload = function(event) {
+            document.getElementById('messages').innerHTML += `
+                <div class="msg sent"><img src="${event.target.result}" style="width:100%; border-radius:8px;"></div>
             `;
-            box.scrollTop = box.scrollHeight;
-        };
-        reader.readAsDataURL(file);
+        }
+        reader.readAsDataURL(e.target.files[0]);
     }
-</script>
 
+    function logout() { localStorage.clear(); location.reload(); }
+
+    window.onload = () => { if(localStorage.getItem('logged')) loadMarket(); };
+</script>
 </body>
 </html>
 
-​<!-- end list -->
