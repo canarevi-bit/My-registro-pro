@@ -7,50 +7,88 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body, html { margin: 0; padding: 0; background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body, html { margin: 0; padding: 0; background: #000; color: #fff; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; }
-        .main-content { position: relative; z-index: 2; max-width: 800px; margin: 0 auto; padding: 40px 20px; text-align: center; }
+        .main-content { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: 40px 20px; text-align: center; }
         
-        /* FOTO DE PERFIL CORREGIDA */
-        .profile-pic { 
-            width: 150px; height: 150px; border-radius: 50%; border: 3px solid #fbff00; 
-            margin-top: 20px; box-shadow: 0 0 20px rgba(251, 255, 0, 0.4); 
-            object-fit: cover;
-        }
+        header { height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        h1 { font-size: 2.5rem; font-weight: 200; letter-spacing: 8px; margin: 0; text-transform: uppercase; line-height: 1.2; }
+        .tagline { color: #fbff00; letter-spacing: 3px; font-size: 0.9rem; margin-top: 20px; text-transform: uppercase; opacity: 0.8; }
 
-        h1 { font-size: 2rem; letter-spacing: 5px; margin: 20px 0; text-transform: uppercase; }
-        .tagline { color: #fbff00; font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 30px; }
+        section { padding: 60px 0; border-top: 1px solid rgba(255,255,255,0.1); text-align: left; }
+        h2 { font-weight: 300; letter-spacing: 4px; color: #fbff00; margin-bottom: 30px; text-align: center; }
+
+        .exp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .exp-card { 
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1);
+            padding: 25px; transition: 0.3s;
+        }
+        .exp-card:hover { border-color: #fbff00; background: rgba(251, 255, 0, 0.03); }
+        .exp-card i { font-size: 1.8rem; color: #fbff00; margin-bottom: 15px; }
+        .exp-card h3 { margin: 10px 0; font-weight: 400; letter-spacing: 1px; }
+        .exp-card p { font-size: 0.9rem; color: #aaa; line-height: 1.6; }
+
         .btn-ws { 
-            display: inline-block; padding: 12px 25px; border: 1px solid #25D366; 
-            color: #25D366; text-decoration: none; border-radius: 5px; transition: 0.3s; 
+            display: inline-block; padding: 15px 35px; border: 1px solid #25D366; 
+            color: #25D366; text-decoration: none; transition: 0.3s; 
+            margin-top: 20px; letter-spacing: 2px; font-weight: bold;
         }
         .btn-ws:hover { background: #25D366; color: #fff; }
     </style>
-</head>
+ head>
 <body>
-    <div id="particles-js"></div>
-    <div class="main-content">
-        <img src="https://i.postimg.cc/9F49669M/cyberpunk-profile.jpg" class="profile-pic" onerror="this.src='https://ui-avatars.com/api/?name=Jared+Yoel&background=fbff00&color=000'">
-        
+
+<div id="particles-js"></div>
+
+<div class="main-content">
+    <header>
         <h1>JARED YOEL <br> CANARE GUZMAN</h1>
-        <p class="tagline">AIRNERS MOD | TAKENOS MGMT | TIKTOK SUPPORT</p>
-        
+        <p class="tagline">Airners Mod | Takenos Management | TikTok Live Support</p>
         <a href="https://wa.me/59160204538" class="btn-ws">
             <i class="fab fa-whatsapp"></i> CONTACTO: 60204538
         </a>
-    </div>
+    </header>
 
-    <script>
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 80 },
-                "color": { "value": "#ffffff" },
-                "opacity": { "value": 0.3 },
-                "size": { "value": 3 },
-                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1 },
-                "move": { "enable": true, "speed": 1 }
-            }
-        });
-    </script>
+    <section id="experiencia">
+        <h2>EXPERIENCIA PROFESIONAL</h2>
+        <div class="exp-grid">
+            <div class="exp-card">
+                <i class="fab fa-discord"></i>
+                <h3>Moderador en Airners</h3>
+                <p>Gestión de comunidad, aplicación de normativas y soporte técnico a usuarios dentro de la plataforma de Discord.</p>
+            </div>
+            <div class="exp-card">
+                <i class="fas fa-tasks"></i>
+                <h3>Gestión en Takenos</h3>
+                <p>Administración estratégica de redes sociales y optimización de comunicación para la marca.</p>
+            </div>
+            <div class="exp-card">
+                <i class="fab fa-tiktok"></i>
+                <h3>Soporte TikTok Live</h3>
+                <p>Resolución de dudas, preguntas frecuentes y asistencia técnica en tiempo real durante transmisiones en vivo.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 50px; opacity: 0.3; font-size: 0.7rem; letter-spacing: 2px;">
+        &copy; 2024 JARED YOEL CANARE GUZMAN. TODOS LOS DERECHOS RESERVADOS.
+    </footer>
+</div>
+
+<script>
+    particlesJS("particles-js", {
+        "particles": {
+            "number": { "value": 100 },
+            "color": { "value": "#ffffff" },
+            "opacity": { "value": 0.2 },
+            "size": { "value": 2 },
+            "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1 },
+            "move": { "enable": true, "speed": 1.5 }
+        },
+        "interactivity": {
+            "events": { "onhover": { "enable": true, "mode": "grab" } }
+        }
+    });
+</script>
 </body>
 </html>
