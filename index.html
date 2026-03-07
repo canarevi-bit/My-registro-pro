@@ -3,149 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warp P2P - Inicio</title>
+    <title>Warp P2P Marketplace</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #fbff00; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+        :root { --yellow: #fbff00; --glass: rgba(15, 15, 15, 0.95); }
+        body, html { margin: 0; padding: 0; background: #000; color: white; font-family: sans-serif; overflow-x: hidden; height: 100%; }
 
-        /* PANTALLA INICIAL: LA LÁMPARA EN LA OSCURIDAD */
-        #intro-layer {
-            position: fixed; inset: 0; background: #000; z-index: 1000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1s ease-out;
-        }
+        /* 1. LÁMPARA DE CUERDA (PULL SWITCH) */
+        #dark-room { position: fixed; inset: 0; background: #050505; z-index: 2000; display: flex; justify-content: center; transition: 0.6s; }
+        .pull-chain { width: 4px; height: 150px; background: #444; position: relative; cursor: pointer; transition: 0.2s; }
+        .pull-chain:active { height: 170px; }
+        .pull-handle { width: 20px; height: 40px; background: #666; position: absolute; bottom: -40px; left: -8px; border-radius: 5px; }
+        .bulb-off { position: absolute; top: 0; font-size: 50px; color: #111; transform: translateY(-30px); }
 
-        .lamp-box { cursor: pointer; text-align: center; }
-        .lamp-icon { 
-            font-size: 70px; color: #222; transition: 0.3s; 
-            filter: drop-shadow(0 0 0px transparent);
-        }
-        .lamp-box:hover .lamp-icon { color: #444; }
-        .lamp-box.active .lamp-icon { 
-            color: var(--primary); 
-            filter: drop-shadow(0 0 30px var(--primary)) drop-shadow(0 0 60px var(--primary)); 
-        }
+        /* 2. EFECTO WARP (ESTRELLAS) */
+        .warp-bg { position: fixed; inset: 0; z-index: -1; perspective: 600px; overflow: hidden; opacity: 0; transition: 1s; }
+        .star { position: absolute; width: 2px; height: 2px; background: #fff; animation: warpSpeed 1.5s infinite linear; }
+        @keyframes warpSpeed { 0% { transform: translateZ(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateZ(600px) scale(15); opacity: 0; } }
 
-        /* EFECTO WARP (FONDO ESTRELLA) */
-        .warp-scene { position: fixed; inset: 0; z-index: -1; perspective: 500px; }
-        .star {
-            position: absolute; width: 2px; height: 2px; background: #fff;
-            opacity: 0; animation: warpSpeed 1.8s infinite linear;
-        }
-        @keyframes warpSpeed {
-            0% { transform: translateZ(0); opacity: 0; }
-            30% { opacity: 1; }
-            100% { transform: translateZ(500px) scale(15); opacity: 0; }
-        }
-
-        /* CONTENEDOR DE LOGIN (CRISTAL) */
-        .login-view { 
-            display: flex; justify-content: center; align-items: center; 
-            height: 100vh; opacity: 0; transition: 1.5s; 
-        }
-        .glass-card {
-            background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(20px);
-            border: 1px solid rgba(251, 255, 0, 0.3); border-radius: 30px;
-            padding: 40px; width: 85%; max-width: 320px; text-align: center;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
-        }
-
-        .input-group { position: relative; margin-bottom: 20px; }
-        .input-group i { position: absolute; left: 15px; top: 14px; color: var(--primary); font-size: 18px; }
-        input { 
-            width: 100%; padding: 14px 14px 14px 45px; border-radius: 15px; border: 1px solid #333; 
-            background: #050505; color: white; box-sizing: border-box; outline: none;
-        }
-
-        button { 
-            width: 100%; padding: 14px; border-radius: 15px; border: none; font-weight: bold;
-            background: var(--primary); color: #000; text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(251, 255, 0, 0.3); cursor: pointer;
-        }
         .hidden { display: none !important; }
+
+        /* 3. REGISTRO (GLASSCARD) */
+        .auth-view { display: flex; justify-content: center; align-items: center; height: 100vh; opacity: 0; transition: 1s; }
+        .glass { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(251, 255, 0, 0.2); border-radius: 25px; padding: 30px; width: 85%; max-width: 320px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #333; background: #000; color: #fff; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: var(--yellow); font-weight: bold; color: #000; cursor: pointer; margin-top: 10px; }
+
+        /* 4. MARKETPLACE P2P Y PRODUCTOS */
+        .header { padding: 15px; position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; background: #000; border-bottom: 2px solid var(--yellow); z-index: 100; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
+        .p-card { border-radius: 15px; overflow: hidden; border: 1px solid #222; background: #111; font-size: 0.8em; }
+        .p-img { width: 100%; height: 140px; object-fit: cover; }
+        .p-info { padding: 10px; }
+        .price { color: var(--yellow); font-weight: bold; font-size: 1.1em; }
     </style>
 </head>
 <body>
 
-<div id="intro-layer">
-    <div class="lamp-box" id="main-lamp" onclick="ignite()">
-        <i class="fas fa-lightbulb lamp-icon"></i>
-        <p style="color: #333; margin-top: 20px; font-weight: bold; letter-spacing: 1px;">ENCENDER ACCESO</p>
+<div id="dark-room">
+    <div class="pull-chain" onclick="pull()">
+        <i class="fas fa-lightbulb bulb-off"></i>
+        <div class="pull-handle"></div>
     </div>
 </div>
 
-<div class="warp-scene" id="stars"></div>
+<div class="warp-bg" id="stars"></div>
 
-<div id="login-screen" class="login-view">
-    <div class="glass-card">
-        <i class="fas fa-user-shield" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
-        <h2 style="color: white; margin-bottom: 30px;">REGISTRO WARP</h2>
-        
-        <div id="step-phone">
-            <div class="input-group">
-                <i class="fas fa-mobile-alt"></i>
-                <input type="tel" id="user-phone" placeholder="Tu Celular">
-            </div>
-            <button onclick="requestCode()">ENTRAR</button>
+<div id="view-auth" class="auth-view">
+    <div class="glass">
+        <i class="fas fa-user-lock" style="font-size: 40px; color: var(--yellow); margin-bottom: 20px;"></i>
+        <h2 style="margin:0 0 20px 0">REGISTRO</h2>
+        <div id="step1">
+            <input type="tel" id="user-tel" placeholder="Nro de Celular">
+            <button onclick="sendPin()">PEDIR PIN</button>
         </div>
-
-        <div id="step-pin" class="hidden">
-            <p style="color: #aaa;">PIN GENERADO: <b id="pin-display" style="color:var(--primary)"></b></p>
-            <div class="input-group">
-                <i class="fas fa-key"></i>
-                <input type="number" id="user-pin" placeholder="Ingresa PIN">
-            </div>
-            <button onclick="finishLogin()">ACCEDER A LA TIENDA</button>
+        <div id="step2" class="hidden">
+            <p>PIN: <b id="pin-val" style="color:var(--yellow)"></b></p>
+            <input type="number" id="pin-in" placeholder="0000">
+            <button onclick="enterMarket()">INGRESAR AL P2P</button>
         </div>
     </div>
+</div>
+
+<div id="view-market" class="hidden">
+    <div class="header">
+        <h2 style="color:var(--yellow); margin:0;">P2P MARKET</h2>
+        <i class="fas fa-plus-circle" style="font-size: 30px; color: var(--yellow); cursor: pointer;" onclick="openAdd()"></i>
+    </div>
+    <div class="grid" id="market-grid">
+        </div>
 </div>
 
 <script>
-    // 1. GENERAR FONDO DE ESTRELLAS
-    const container = document.getElementById('stars');
-    for(let i=0; i<90; i++) {
+    // Generar estrellas Warp
+    const sC = document.getElementById('stars');
+    for(let i=0; i<80; i++) {
         const s = document.createElement('div');
         s.className = 'star';
-        s.style.left = Math.random() * 100 + '%';
-        s.style.top = Math.random() * 100 + '%';
-        s.style.animationDelay = Math.random() * 2 + 's';
-        container.appendChild(s);
+        s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
+        s.style.animationDelay = Math.random()*1.5+'s';
+        sC.appendChild(s);
     }
 
-    // 2. FUNCIÓN DE LA LÁMPARA (ENCENDIDO)
-    function ignite() {
-        const lamp = document.getElementById('main-lamp');
-        const intro = document.getElementById('intro-layer');
-        const login = document.getElementById('login-screen');
-
-        lamp.classList.add('active'); // Enciende la bombilla
-        
-        setTimeout(() => {
-            intro.style.opacity = '0'; // Se desvanece la oscuridad
-            login.style.opacity = '1'; // Aparece el login
-            setTimeout(() => intro.classList.add('hidden'), 1000);
-        }, 600);
+    // Acción de la cuerda
+    function pull() {
+        document.getElementById('dark-room').style.opacity = '0';
+        document.getElementById('stars').style.opacity = '1';
+        document.getElementById('view-auth').style.opacity = '1';
+        setTimeout(() => document.getElementById('dark-room').classList.add('hidden'), 600);
     }
 
-    // 3. LÓGICA DE LOGEO
-    let tempCode;
-    function requestCode() {
-        if(document.getElementById('user-phone').value.length < 6) return;
-        tempCode = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById('step-phone').classList.add('hidden');
-        document.getElementById('step-pin').classList.remove('hidden');
-        document.getElementById('pin-display').innerText = tempCode;
+    let myPin;
+    function sendPin() {
+        if(document.getElementById('user-tel').value.length < 5) return;
+        myPin = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+        document.getElementById('pin-val').innerText = myPin;
     }
 
-    function finishLogin() {
-        if(document.getElementById('user-pin').value == tempCode) {
-            alert("¡Conexión Exitosa!"); // Aquí ya entra a ver los productos
+    function enterMarket() {
+        if(document.getElementById('pin-in').value == myPin) {
+            document.getElementById('view-auth').classList.add('hidden');
+            document.getElementById('view-market').classList.remove('hidden');
+            showItems();
+        }
+    }
+
+    // Cargar productos y comprobantes
+    let db = [
+        { n: "Moto honda biz", p: "Gratis", i: "https://i.ibb.co/LzNf9P9/moto.jpg" },
+        { n: "Laptop Ryzen 7", p: "Bs.589", i: "https://i.ibb.co/vX5YyY5/laptop.jpg" }
+    ];
+
+    function showItems() {
+        const g = document.getElementById('market-grid');
+        g.innerHTML = "";
+        db.forEach(x => {
+            g.innerHTML += `<div class="p-card"><img src="${x.i}" class="p-img"><div class="p-info"><div class="price">${x.p}</div><div>${x.n}</div></div></div>`;
+        });
+    }
+
+    function openAdd() {
+        const url = prompt("Pega el link de la foto del producto o comprobante:");
+        const nom = prompt("Nombre o descripción:");
+        const pre = prompt("Precio (Ej: Bs.100):");
+        if(url && nom && pre) {
+            db.unshift({n: nom, p: pre, i: url});
+            showItems();
         }
     }
 </script>
 </body>
 </html>
-
-
 
